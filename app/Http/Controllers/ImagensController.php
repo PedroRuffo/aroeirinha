@@ -7,44 +7,40 @@ use Illuminate\Http\Request;
 
 class ImagensController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        return Imagens::all();
+        return Imagens::with('produto')->get();
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        $data=Imagens::create($request->all());
-        return $data;
+        $request->validate([
+            'Nome' => 'required|string',
+            'Url' => 'required|string',
+            'fk_Produtos_ID' => 'required|exists:produtos,ID',
+        ]);
+
+        return Imagens::create($request->all());
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show($id)
     {
-        //
+        return Imagens::with('produto')->findOrFail($id);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        //
+        $imagem = Imagens::findOrFail($id);
+        $imagem->update($request->all());
+
+        return $imagem;
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        Imagens::destroy($id);
+        $imagem = Imagens::findOrFail($id);
+        $imagem->delete();
+
+        return response()->json(['message' => 'Imagem deletada com sucesso']);
     }
 }

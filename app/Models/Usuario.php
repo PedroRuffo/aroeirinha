@@ -7,9 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Usuario extends Model
 {
-    protected $fillable =['cpf','nome','email','telefone','senha'];
     use HasFactory;
-    // public function Pedidos(){
-    // return $this->hasMany(Pedidos::class);
- }
 
+    protected $table = 'usuarios';
+    protected $fillable = ['CPF', 'Nome', 'Email', 'Telefone', 'Senha'];
+
+    public function pedidos()
+    {
+        return $this->hasMany(Pedidos::class, 'fk_Usuario_ID');
+    }
+}

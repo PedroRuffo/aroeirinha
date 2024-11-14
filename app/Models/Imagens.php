@@ -7,9 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Imagens extends Model
 {
-    protected $fillable =['nome','url'];
     use HasFactory;
-//     public function produtos(){
-//     return $this->hasOne(Produtos::class);
-// }
+
+    protected $table = 'imagens';
+    protected $fillable = ['Nome', 'Url', 'fk_Produtos_ID'];
+
+    public function produto()
+    {
+        return $this->belongsTo(Produtos::class, 'fk_Produtos_ID');
+    }
 }

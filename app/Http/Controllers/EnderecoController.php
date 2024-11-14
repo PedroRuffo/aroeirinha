@@ -7,44 +7,44 @@ use Illuminate\Http\Request;
 
 class EnderecoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         return Endereco::all();
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        $data=Endereco::create($request->all());
-        return $data;
+        $request->validate([
+            'CEP' => 'required|string',
+            'Rua' => 'required|string',
+            'Numero' => 'required|integer',
+            'Cidade' => 'required|string',
+            'Bairro' => 'required|string',
+            'Estado' => 'required|string',
+            'Complemento' => 'nullable|string',
+        ]);
+
+        return Endereco::create($request->all());
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show($id)
     {
-        //
+        return Endereco::findOrFail($id);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        //
+        $endereco = Endereco::findOrFail($id);
+        $endereco->update($request->all());
+
+        return $endereco;
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        Endereco::destroy($id);
+        $endereco = Endereco::findOrFail($id);
+        $endereco->delete();
+
+        return response()->json(['message' => 'Endereço deletado com sucesso']);
     }
 }
