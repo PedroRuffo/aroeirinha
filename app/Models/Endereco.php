@@ -7,9 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Endereco extends Model
 {
-    protected $fillable =['cep','rua','numero','cidade','bairro','estado','complemento'];
     use HasFactory;
-//     public function pedidos(){
-//     return $this->belongsTo(Pedidos::class);
-// }
+
+    protected $table = 'enderecos';
+    protected $fillable = ['CEP', 'Rua', 'Numero', 'Cidade', 'Bairro', 'Estado', 'Complemento'];
+
+    public function pedidos()
+    {
+        return $this->hasMany(Pedidos::class, 'fk_Endereco_ID');
+    }
 }

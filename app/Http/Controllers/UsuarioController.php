@@ -7,45 +7,42 @@ use Illuminate\Http\Request;
 
 class UsuarioController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         return Usuario::all();
     }
-    
-    /**
-     * Store a newly created resource in storage.
-     */
+
     public function store(Request $request)
     {
-        $data=Usuario::create($request->all());
-        return $data;
+        $request->validate([
+            'CPF' => 'required|unique:usuarios',
+            'Nome' => 'required|string',
+            'Email' => 'required|email|unique:usuarios',
+            'Telefone' => 'nullable|string',
+            'Senha' => 'required|string',
+        ]);
+
+        return Usuario::create($request->all());
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show($id)
     {
-        //
+        return Usuario::findOrFail($id);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        //
+        $usuario = Usuario::findOrFail($id);
+        $usuario->update($request->all());
+
+        return $usuario;
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id): string
+    public function destroy($id)
     {
-        Usuario::destroy($id);
-        return 'Usuario apagado!';
+        $usuario = Usuario::findOrFail($id);
+        $usuario->delete();
+
+        return response()->json(['message' => 'Usuário deletado com sucesso']);
     }
 }

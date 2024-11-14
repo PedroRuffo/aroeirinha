@@ -2,53 +2,48 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Pedido;
 use App\Models\Pedidos;
 use Illuminate\Http\Request;
 
 class PedidosController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        return Pedidos::all();
+        return Pedidos::with('usuario', 'endereco')->get();
     }
 
-    public function showUsuarioPedido(Pedidos $pedidos){
-        return $pedidos->Usuario;
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        $data=Pedidos::create($request->all());
-        return $data;
+        $request->validate([
+            'Data' => 'required|date',
+            'Tipo' => 'required|string',
+            'Status' => 'required|string',
+            'fk_Usuario_ID' => 'required|exists:usuarios,ID',
+            'fk_Endereco_ID' => 'required|exists:enderecos,ID',
+        ]);
+
+        return Pedidos::create($request->all());
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show($id)
     {
-        //
+        return Pedidos::with('usuario', 'endereco')->findOrFail($id);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        //
+        $pedido = Pedidos::findOrFail($id);
+        $pedido->update($request->all());
+
+        return $pedido;
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        Pedidos::destroy($id);
+        $pedido = Pedidos::findOrFail($id);
+        $pedido->delete();
+
+        return response()->json(['message' => 'Pedidos deletado com sucesso']);
     }
 }
